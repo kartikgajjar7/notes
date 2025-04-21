@@ -3,18 +3,11 @@ import React from "react";
 import Image from "next/image";
 import VaulDrawer from "./drawer";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { SignInButton } from "@clerk/nextjs";
+
 import { Textarea } from "@/components/ui/textarea";
 import { Package, PackagePlus } from "lucide-react";
 import { useState } from "react";
-import {
-  ClerkProvider,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+
 import {
   Dialog,
   DialogContent,
@@ -140,18 +133,6 @@ export default function Navbar() {
           </DialogContent>
         </Dialog>
         <VaulDrawer />
-        <SignedOut>
-          <SignInButton>
-            <Button variant={"outline"}>Sign In</Button>
-          </SignInButton>
-
-          <SignUpButton>
-            <Button variant={"outline"}>Sign Up</Button>
-          </SignUpButton>
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
       </div>
     </div>
   );
