@@ -60,6 +60,26 @@ export default function Loginform() {
     });
   }
 
+  const handleSocialLogin = async (provider: "github" | "google") => {
+    setError(""); // Ensure setError is declared in the component's state
+    setSuccess("");
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`, // Change if needed
+        },
+      });
+
+      if (error) {
+        setError(error.message);
+      }
+    } catch (err) {
+      setError("An error occurred during social login");
+    }
+  };
+
   return (
     <>
       <Form {...form}>
@@ -106,17 +126,34 @@ export default function Loginform() {
           <FormSuccess message={success} />
           <FormError message={error} />
 
-          <Button className="w-[100%]" type="submit">
-            Submit
+          <Button disabled={isPending} className="w-full" type="submit">
+            Sign In with Email
           </Button>
+
+          <div className="flex my-6 items-center">
+            <div className="w-auto h-1 bg-[#ffffff] flex-grow rounded-full"></div>
+            <div className="mx-2 text-[#ffffff]">or</div>
+            <div className="w-auto h-1 bg-[#ffffff] flex-grow rounded-full"></div>
+          </div>
+          <div className="w-full">
+            <Button
+              disabled={isPending}
+              type="button"
+              onClick={() => handleSocialLogin("google")}
+              className="bg-white text-black hover:bg-gray-100 w-full"
+            >
+              <img className="w-[29px] mr-2" src="/Google.svg" alt="Google" />
+              Sign In with Google
+            </Button>
+          </div>
         </form>
       </Form>
 
       <h1
-        className="text-center cursor-pointer"
+        className="text-center cursor-pointer mt-6"
         onClick={() => router.push("/auth/signup")}
       >
-        Don’t have an account? Sign up
+        Don't have an account? Sign up
       </h1>
     </>
   );

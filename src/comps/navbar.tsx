@@ -1,12 +1,13 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import VaulDrawer from "./drawer";
+import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
-
 import { Textarea } from "@/components/ui/textarea";
 import { Package, PackagePlus } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import {
   Dialog,
@@ -17,21 +18,76 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+
 export default function Navbar() {
-  const [creating, setCreating] = useState(false);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState({
-    name: "",
-    domain: "",
+    title: "",
     description: "",
   });
+  const handleCreateNewNote = async () => {
+    try {
+      setIsLoading(true);
+
+      const { data: session } = await supabase.auth.getSession();
+      const accessToken = session?.session?.access_token;
+
+      const response = await fetch("/api/note", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to create note");
+      }
+
+      toast.success("Note created successfully!");
+      setIsOpen(false);
+      setData({ title: "", description: "" });
+
+      return result.note;
+    } catch (error: any) {
+      console.error("Error creating new note:", error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <div className="h-[52px] w-full flex justify-between border-b-[rgba(255, 255, 255, 0.1)] border-b border-[rgba(255,255,255,0.1)] px-[1rem] items-center">
       <div>
         <Image src="/IMG_4307.png" width={40} height={40} alt="logo" />
       </div>
       <div className="flex justify-items-center gap-3">
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog
+          open={isOpen}
+          onOpenChange={(open) => {
+            setIsOpen(open);
+            if (!open) {
+              // Reset form when dialog is closed
+              setData({ title: "", description: "" });
+            }
+          }}
+        >
           <DialogTrigger>
             <div className="[display:var(--light,block)_var(--dark,none)]">
               <div
@@ -52,9 +108,9 @@ export default function Navbar() {
                   <path
                     fill="currentColor"
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
                     d="m7.25 5-3.5-2.25v4.5L7.25 5Z"
                     data-sentry-element="path"
                     data-sentry-source-file="Button.tsx"
@@ -71,9 +127,9 @@ export default function Navbar() {
                   <path
                     fill="currentColor"
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
                     d="m7.25 5-3.5-2.25v4.5L7.25 5Z"
                     data-sentry-element="path"
                     data-sentry-source-file="Button.tsx"
@@ -82,7 +138,7 @@ export default function Navbar() {
               </div>
             </div>
           </DialogTrigger>
-          <DialogContent className="md:w-[600px] border-[#2E2E2E]  bg-[#000000] md:max-w-[600px]">
+          <DialogContent className="md:w-[600px] border-[#2E2E2E] bg-[#000000] md:max-w-[600px]">
             <DialogHeader>
               <DialogTitle className="flex text-white items-center gap-2">
                 New Note
@@ -90,25 +146,21 @@ export default function Navbar() {
                   <PackagePlus size={16} className="font-normal" />
                 </span>
               </DialogTitle>
-              <div className="px-4 h-full  ">
-                <div className="flex flex-col items-start gap-2 mt-2  py-2 border-[#2E2E2E] border-b">
+              <div className="px-4 h-full">
+                <div className="flex flex-col items-start gap-2 mt-2 py-2 border-[#2E2E2E] border-b">
                   <Package size={18} className="ml-2 text-white" />
                   <Input
-                    onChange={(e) =>
-                      setData({ ...data, [e.target.name]: e.target.value })
-                    }
+                    onChange={handleInputChange}
                     style={{ fontSize: "24px" }}
-                    className="bg-transparent border-none focus-visible:ring-0  border-b-1 border-[#2E2E2E]  rounded-none px-2 py-1  h-full font-medium text-white placeholder:text-[24px] placeholder:text-[#626366]"
+                    className="bg-transparent border-none focus-visible:ring-0 border-b-1 border-[#2E2E2E] rounded-none px-2 py-1 h-full font-medium text-white placeholder:text-[24px] placeholder:text-[#626366]"
                     placeholder="Title Of The Note"
-                    name="name"
-                    value={data.name}
+                    name="title"
+                    value={data.title}
                   />
                 </div>
                 <div className="mt-4">
                   <Textarea
-                    onChange={(e) =>
-                      setData({ ...data, [e.target.name]: e.target.value })
-                    }
+                    onChange={handleInputChange}
                     style={{ fontSize: "14px" }}
                     className="bg-transparent px-2 py-1 border-0 focus-visible:ring-0 outline-0 h-[320px] font-medium text-white placeholder:text-[14px] placeholder:text-[#626366] resize-none"
                     placeholder="Write a description, a project brief..."
@@ -123,11 +175,17 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                 variant={"outline"}
                 className=""
+                disabled={isLoading}
               >
                 Cancel
               </Button>
-              <Button variant={"outline"} className="  ">
-                {creating ? "Creating..." : "Create Project"}
+              <Button
+                onClick={handleCreateNewNote}
+                variant={"outline"}
+                className=""
+                disabled={isLoading}
+              >
+                {isLoading ? "Creating..." : "Create Note"}
               </Button>
             </DialogFooter>
           </DialogContent>

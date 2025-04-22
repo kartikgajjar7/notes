@@ -1,6 +1,7 @@
 "use client";
 
 import { Drawer } from "vaul";
+import { Chat } from "./chat";
 import { Button } from "@/components/ui/button";
 export default function VaulDrawer() {
   return (
@@ -22,7 +23,10 @@ export default function VaulDrawer() {
         <Drawer.Content className=" bg-zinc-900 h-fit overflow-hidden fixed bottom-0 left-0 right-0 outline-none">
           <div className="p-4 h-[700px] bg-zinc-900">
             <div className="mx-auto  w-12 h-1.5 flex-shrink-0 rounded-full bg-gray-300 mb-8"></div>
-            <div className=" px-10 h-[700px] overflow-scroll"></div>
+            <div className=" px-10 h-[700px] overflow-scroll">
+              <Drawer.Title></Drawer.Title>
+              <Chat />
+            </div>
           </div>
         </Drawer.Content>
       </Drawer.Portal>

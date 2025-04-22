@@ -1,5 +1,5 @@
 import Loginform from "@/comps/auth/signinform";
-export default function SignInPage() {
+export default function page() {
   return (
     <div className="flex min-h-screen bg-[#000000] flex-col items-center justify-center">
       <div className="w-full max-w-md space-y-8">
