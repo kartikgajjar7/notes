@@ -131,16 +131,16 @@ export default function Loginform() {
           </Button>
 
           <div className="flex my-6 items-center">
-            <div className="w-auto h-1 bg-[#ffffff] flex-grow rounded-full"></div>
-            <div className="mx-2 text-[#ffffff]">or</div>
-            <div className="w-auto h-1 bg-[#ffffff] flex-grow rounded-full"></div>
+            <div className="w-auto h-1 bg-[#2E2E2E] flex-grow rounded-full"></div>
+            <div className="mx-2 text-white">or</div>
+            <div className="w-auto h-1 bg-[#2E2E2E] flex-grow rounded-full"></div>
           </div>
           <div className="w-full">
             <Button
               disabled={isPending}
               type="button"
               onClick={() => handleSocialLogin("google")}
-              className="bg-white text-black hover:bg-gray-100 w-full"
+              className="bg-white text-[#2E2E2E] hover:bg-gray-100 w-full"
             >
               <img className="w-[29px] mr-2" src="/Google.svg" alt="Google" />
               Sign In with Google

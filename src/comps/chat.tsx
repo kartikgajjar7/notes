@@ -2,9 +2,11 @@
 import { supabase } from "@/lib/supabase";
 import { useChat } from "ai/react";
 import { useSupabaseUser } from "@/hooks/useUser";
-import { useGetUser } from "@/supabase/auth/client";
+import Image from "next/image";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import {
   Card,
   CardContent,
@@ -13,26 +15,37 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send, Bot, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Chat() {
   const user = useSupabaseUser();
+
+  const storageKey = "chat_messages"; // Define a storage key for localStorage
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({
       api: "/api/chat",
       body: {
-        userId: user?.id, // 👈 pass user ID here
+        userId: user?.id,
       },
+      initialMessages:
+        typeof window !== "undefined"
+          ? JSON.parse(localStorage.getItem(storageKey) || "[]")
+          : [], // 👈 लोकल स्टोरेज से इनिशियल मैसेजेस
     });
+  useEffect(() => {
+    if (user?.id) {
+      localStorage.setItem(storageKey, JSON.stringify(messages));
+    }
+  }, [messages, user?.id, storageKey]);
 
   if (!user) return <p>Loading user...</p>;
 
   return (
     <Card className="w-full border shadow-lg">
       <CardContent className="p-0">
-        <ScrollArea className="h-[500px] p-4">
+        <ScrollArea className="h-[500px] p-4 ">
           {messages.length === 0 ? (
             <div className="flex h-full items-center justify-center">
               <p className="text-center text-muted-foreground">
@@ -50,8 +63,9 @@ export function Chat() {
                   )}
                 >
                   {message.role !== "user" && (
-                    <Avatar className="h-8 w-8 bg-primary/10">
-                      <Bot className="h-4 w-4 text-primary" />
+                    <Avatar>
+                      <AvatarImage src="/IMG_4307.PNG" />
+                      <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                   )}
                   <div
@@ -67,16 +81,18 @@ export function Chat() {
                     </p>
                   </div>
                   {message.role === "user" && (
-                    <Avatar className="h-8 w-8 bg-primary">
-                      <User className="h-4 w-4 text-primary-foreground" />
+                    <Avatar>
+                      <AvatarImage src={user?.user_metadata.avatar_url} />
+                      <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                   )}
                 </div>
               ))}
               {isLoading && (
                 <div className="flex items-start gap-3">
-                  <Avatar className="h-8 w-8 bg-primary/10">
-                    <Bot className="h-4 w-4 text-primary" />
+                  <Avatar>
+                    <AvatarImage src="/IMG_4307.PNG" />
+                    <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   <div className="rounded-lg bg-muted px-4 py-2 max-w-[80%]">
                     <div className="flex space-x-1">

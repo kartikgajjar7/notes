@@ -24,7 +24,6 @@ import { supabase as s } from "@/lib/supabase"; // Adjust if different
 export const registerSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  name: z.string(),
 });
 
 export default function SignUpForm() {
@@ -103,23 +102,7 @@ export default function SignUpForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input
-                    disabled={isPending}
-                    placeholder="Enter your name"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="password"
@@ -147,25 +130,17 @@ export default function SignUpForm() {
           </Button>
 
           <div className="flex my-6 items-center">
-            <div className="w-auto h-1 bg-[#ffffff] flex-grow rounded-full"></div>
-            <div className="mx-2 text-[#ffffff]">or</div>
-            <div className="w-auto h-1 bg-[#ffffff] flex-grow rounded-full"></div>
+            <div className="w-auto h-1 bg-[#2E2E2E] flex-grow rounded-full"></div>
+            <div className="mx-2 text-white">or</div>
+            <div className="w-auto h-1 bg-[#2E2E2E] flex-grow rounded-full"></div>
           </div>
 
           <div className="w-[100%] flex flex-row items-center justify-around space-x-4">
             <Button
               disabled={isPending}
               type="button"
-              onClick={() => handleSocialLogin("github")}
-              className="bg-white text-black hover:bg-gray-100 w-[45%]"
-            >
-              <img className="w-[58px]" src="/fgithub.png" alt="GitHub" />
-            </Button>
-            <Button
-              disabled={isPending}
-              type="button"
               onClick={() => handleSocialLogin("google")}
-              className="bg-white text-black hover:bg-gray-100 w-[45%]"
+              className="bg-white text-black hover:bg-gray-100 w-full"
             >
               <img className="w-[29px]" src="/Google.svg" alt="Google" />
             </Button>

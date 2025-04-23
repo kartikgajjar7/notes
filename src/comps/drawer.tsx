@@ -21,7 +21,7 @@ export default function VaulDrawer() {
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/50" />
         <Drawer.Content className=" bg-zinc-900 h-fit overflow-hidden fixed bottom-0 left-0 right-0 outline-none">
-          <div className="p-4 h-[700px] bg-zinc-900">
+          <div className="p-4 h-[700px] bg-[#171717]">
             <div className="mx-auto  w-12 h-1.5 flex-shrink-0 rounded-full bg-gray-300 mb-8"></div>
             <div className=" px-10 h-[700px] overflow-scroll">
               <Drawer.Title></Drawer.Title>

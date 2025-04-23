@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Package, PackagePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
   Dialog,
@@ -21,18 +22,22 @@ import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState({
     title: "",
     description: "",
   });
-  const handleCreateNewNote = async () => {
-    try {
-      setIsLoading(true);
 
+  // Create note mutation with React Query
+  const createNoteMutation = useMutation({
+    mutationFn: async (noteData) => {
       const { data: session } = await supabase.auth.getSession();
       const accessToken = session?.session?.access_token;
+
+      if (!accessToken) {
+        throw new Error("No access token available");
+      }
 
       const response = await fetch("/api/note", {
         method: "POST",
@@ -40,10 +45,7 @@ export default function Navbar() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({
-          title: data.title,
-          description: data.description,
-        }),
+        body: JSON.stringify(noteData),
       });
 
       const result = await response.json();
@@ -52,16 +54,32 @@ export default function Navbar() {
         throw new Error(result.error || "Failed to create note");
       }
 
+      return result.note;
+    },
+    onSuccess: () => {
       toast.success("Note created successfully!");
       setIsOpen(false);
       setData({ title: "", description: "" });
 
-      return result.note;
-    } catch (error: any) {
+      // Invalidate and refetch notes query to update the UI
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+    onError: (error) => {
       console.error("Error creating new note:", error.message);
-    } finally {
-      setIsLoading(false);
+      toast.error(`Failed to create note: ${error.message}`);
+    },
+  });
+
+  const handleCreateNewNote = () => {
+    if (!data.title.trim()) {
+      toast.error("Title is required");
+      return;
     }
+
+    createNoteMutation.mutate({
+      title: data.title,
+      description: data.description,
+    });
   };
 
   const handleInputChange = (e) => {
@@ -147,25 +165,27 @@ export default function Navbar() {
                 </span>
               </DialogTitle>
               <div className="px-4 h-full">
-                <div className="flex flex-col items-start gap-2 mt-2 py-2 border-[#2E2E2E] border-b">
+                <div className="flex bg-black flex-col items-start gap-2 mt-2 py-2 border-[#2E2E2E] border-b">
                   <Package size={18} className="ml-2 text-white" />
                   <Input
                     onChange={handleInputChange}
                     style={{ fontSize: "24px" }}
-                    className="bg-transparent border-none focus-visible:ring-0 border-b-1 border-[#2E2E2E] rounded-none px-2 py-1 h-full font-medium text-white placeholder:text-[24px] placeholder:text-[#626366]"
+                    className="bg-[#050505] border-none focus-visible:ring-0 border-b-1 border-[#2E2E2E] rounded-none px-2 py-1 h-full font-medium text-white placeholder:text-[24px] placeholder:text-[#626366]"
                     placeholder="Title Of The Note"
                     name="title"
                     value={data.title}
+                    disabled={createNoteMutation.isPending}
                   />
                 </div>
                 <div className="mt-4">
                   <Textarea
                     onChange={handleInputChange}
                     style={{ fontSize: "14px" }}
-                    className="bg-transparent px-2 py-1 border-0 focus-visible:ring-0 outline-0 h-[320px] font-medium text-white placeholder:text-[14px] placeholder:text-[#626366] resize-none"
+                    className="bg-[#050505] px-2 py-1 border-0 focus-visible:ring-0 outline-0 h-[320px] font-medium text-white placeholder:text-[14px] placeholder:text-[#626366] resize-none"
                     placeholder="Write a description, a project brief..."
                     name="description"
                     value={data.description}
+                    disabled={createNoteMutation.isPending}
                   />
                 </div>
               </div>
@@ -174,18 +194,16 @@ export default function Navbar() {
               <Button
                 onClick={() => setIsOpen(false)}
                 variant={"outline"}
-                className=""
-                disabled={isLoading}
+                disabled={createNoteMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreateNewNote}
                 variant={"outline"}
-                className=""
-                disabled={isLoading}
+                disabled={createNoteMutation.isPending}
               >
-                {isLoading ? "Creating..." : "Create Note"}
+                {createNoteMutation.isPending ? "Creating..." : "Create Note"}
               </Button>
             </DialogFooter>
           </DialogContent>
