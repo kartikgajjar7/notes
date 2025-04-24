@@ -1,9 +1,11 @@
 "use client";
-
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Navbar from "@/comps/navbar";
 import UserGreetText from "@/components/UserGreetText";
 import LoginButton from "@/components/LoginLogoutButton";
 export default function Page() {
+  const router = useRouter();
   return (
     <div className="flex flex-col min-h-screen w-full justify-items-center bg-[#ffffff]">
       {/* <UserGreetText />
@@ -12,7 +14,12 @@ export default function Page() {
         <div className="flex items-center gap-3">
           <span>logo</span>
           <span className="text-3xl font-serif font-light text-[#222a28]">
-            Wittl
+            <Image
+              src="/IMG_4307.PNG"
+              width={50}
+              height={50}
+              alt="Picture of the lOGO"
+            />
           </span>
         </div>
         <nav className="flex items-center gap-6 text-[#222a28] text-base font-light">
@@ -31,7 +38,10 @@ export default function Page() {
           hiring process simpler, more intuitive and a little more human.
         </p>
         <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-2">
-          <button className="bg-[#222a28] text-white rounded-md px-8 py-3 text-lg font-medium hover:bg-[#31404a]">
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="bg-[#222a28] text-white rounded-md px-8 py-3 text-lg font-medium hover:bg-[#31404a]"
+          >
             Get started
           </button>
         </div>

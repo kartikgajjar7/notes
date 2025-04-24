@@ -15,7 +15,7 @@ export default function Dashboard() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
-        window.location.href = "/";
+        window.location.href = "/login";
       }
     };
     fetchUser();
