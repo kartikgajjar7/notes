@@ -1,14 +1,25 @@
 "use client";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+
 import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
+import { createClient } from "@/lib/supabase/client";
 import fetchNotes from "@/function/fetchnotes";
 import { NoteCard } from "@/comps/notecard";
-import deletenote from "@/function/deletenote";
+import { useEffect } from "react";
 import Navbar from "@/comps/navbar";
 import { NotesGridSkeleton } from "@/comps/skel";
 export default function Dashboard() {
+  const supabase = createClient();
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "/";
+      }
+    };
+    fetchUser();
+  }, []);
   const { data, error, isLoading } = useQuery({
     queryKey: ["notes"],
     queryFn: fetchNotes,
@@ -27,7 +38,7 @@ export default function Dashboard() {
     content = <div>No notes found. Create your first note!</div>;
   } else {
     content = (
-      <div className="flex flex-row mt-10 gap-4 px-10 justify-start items-center w-full h-full flex-wrap">
+      <div className="flex flex-row  gap-4 px-10 justify-start items-center w-full h-full flex-wrap">
         {data.map((note) => (
           <NoteCard
             time={note.created_at}

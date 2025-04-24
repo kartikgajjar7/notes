@@ -1,10 +1,11 @@
 // hooks/useSupabaseUser.js
 "use client";
-import { supabase } from "@/lib/supabase";
-import { useEffect, useState } from "react";
 
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 export const useSupabaseUser = () => {
   const [user, setUser] = useState(null);
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchUser = async () => {

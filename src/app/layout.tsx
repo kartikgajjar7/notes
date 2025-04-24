@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
 import QueryProvider from "@/lib/QueryClientProvider";
 import { Toaster } from "@/components/ui/sonner";
-
+import { AuthProvider } from "../context/AuthContext";
 import { ThemeProvider } from "@/comps/theme-provider";
 
 const geistSans = Geist({
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
+        cz-shortcut-listen="true"
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider

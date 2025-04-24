@@ -2,14 +2,14 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import VaulDrawer from "./drawer";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Package, PackagePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import LoginButton from "@/components/LoginLogoutButton";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
+  const supabase = createClient();
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
@@ -95,6 +96,7 @@ export default function Navbar() {
       <div>
         <Image src="/IMG_4307.png" width={40} height={40} alt="logo" />
       </div>
+      <LoginButton />
       <div className="flex justify-items-center gap-3">
         <Dialog
           open={isOpen}

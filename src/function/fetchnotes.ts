@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
-
+import { createClient } from "@/lib/supabase/client";
 export default async function fetchNotes() {
+  const supabase = createClient();
   const {
     data: { user },
     error: userError,

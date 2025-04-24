@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { createClient } from "@/lib/supabase/client";
 import { Edit, Trash2, MoreHorizontal, Save, X } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
+
 import {
   Card,
   CardContent,
@@ -29,6 +30,7 @@ export function NoteCard({
   onNoteUpdated,
   onDelete,
 }: NoteCardProps) {
+  const supabase = createClient();
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);

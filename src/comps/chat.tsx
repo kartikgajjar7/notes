@@ -1,6 +1,7 @@
 "use client";
 import { supabase } from "@/lib/supabase";
 import { useChat } from "ai/react";
+import { createClient } from "@/lib/supabase/client";
 import { useSupabaseUser } from "@/hooks/useUser";
 import Image from "next/image";
 import { useEffect } from "react";
@@ -21,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 export function Chat() {
   const user = useSupabaseUser();
-
+  console.log(user);
   const storageKey = "chat_messages"; // Define a storage key for localStorage
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({
