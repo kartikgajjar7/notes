@@ -94,10 +94,16 @@ export default function Navbar() {
   return (
     <div className="h-[52px] w-full flex justify-between border-b-[rgba(255, 255, 255, 0.1)] border-b border-[rgba(255,255,255,0.1)] px-[1rem] items-center">
       <div>
-        <Image src="/IMG_4307.png" width={40} height={40} alt="logo" />
+        <Image
+          src="https://private-user-images.githubusercontent.com/97971066/436860062-8481d7ee-9246-45f8-a599-2da64cc18a4c.PNG?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDU0NzM2NzYsIm5iZiI6MTc0NTQ3MzM3NiwicGF0aCI6Ii85Nzk3MTA2Ni80MzY4NjAwNjItODQ4MWQ3ZWUtOTI0Ni00NWY4LWE1OTktMmRhNjRjYzE4YTRjLlBORz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA0MjQlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNDI0VDA1NDI1NlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTc0ZTZhYzExNDkwMWRiYWRlOWYwNDllM2QxZmEzMWIwNDg4ODYxNWM5ODdkZjk4ODY0M2JlNzg4YzA5ZDZlMTkmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.kdM5wUuzm-Lx5i6q0qjI994a8gO1VDsmTQUz3Na25MM"
+          width={40}
+          height={40}
+          alt="logo"
+        />
       </div>
-      <LoginButton />
+
       <div className="flex justify-items-center gap-3">
+        <LoginButton />
         <Dialog
           open={isOpen}
           onOpenChange={(open) => {
