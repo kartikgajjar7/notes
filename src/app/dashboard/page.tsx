@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import fetchNotes from "@/function/fetchnotes";
@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import Navbar from "@/comps/navbar";
 import { NotesGridSkeleton } from "@/comps/skel";
 export default function Dashboard() {
+  const router = useRouter();
   const supabase = createClient();
   useEffect(() => {
     const fetchUser = async () => {
@@ -15,7 +16,7 @@ export default function Dashboard() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
-        window.location.href = "/login";
+        router.push("/login");
       }
     };
     fetchUser();
