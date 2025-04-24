@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import { signout } from "@/lib/auth-action";
 
 import { createClient } from "@/lib/supabase/client";
+import { signout } from "@/lib/auth-action";
 const LoginButton = () => {
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
@@ -21,7 +21,6 @@ const LoginButton = () => {
   if (user) {
     return (
       <Button
-        className="ml-2 px-6 py-2 rounded-md bg-[#f8f8f6] border border-[#e1e1de] text-[#222a28] font-medium hover:bg-[#f3f3f0] hover:text-black"
         onClick={() => {
           signout();
           setUser(null);
@@ -33,7 +32,6 @@ const LoginButton = () => {
   }
   return (
     <Button
-      className="ml-2 px-6 py-2 rounded-md bg-[#f8f8f6] border border-[#e1e1de] text-[#222a28] font-medium hover:bg-[#f3f3f0] hover:text-black"
       variant="outline"
       onClick={() => {
         router.push("/login");

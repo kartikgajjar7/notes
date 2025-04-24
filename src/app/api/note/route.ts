@@ -1,10 +1,11 @@
 import { notesIndex } from "@/lib/pindecode";
-import { supabase } from "@/lib/supabase";
+
 import { getEmbedding } from "@/lib/openai";
 import { NextRequest, NextResponse } from "next/server";
-import client from "@/lib/supabase/server";
-import { cookies } from "next/headers";
+import { createClient } from "@/lib/supabase/server";
+
 export async function POST(req: NextRequest) {
+  const supabase = createClient();
   try {
     const body = await req.json();
     const { title, description } = body;
@@ -78,6 +79,7 @@ async function getEmbeddingForNote(title: string, content: string | undefined) {
 }
 
 export async function PUT(req: NextRequest) {
+  const supabase = createClient();
   try {
     const body = await req.json();
     const { id, title, description } = body;
@@ -151,12 +153,10 @@ export async function PUT(req: NextRequest) {
     );
   }
 }
-// For App Router: /app/api/note/route.ts
-// For Pages Router: /pages/api/note.js
-import { NextApiRequest, NextApiResponse } from "next";
-// /app/api/note/route.ts
 
 export async function DELETE(request: NextRequest) {
+  const supabase = createClient();
+
   try {
     // Extract and verify the auth token from headers
     const authHeader = request.headers.get("authorization");
@@ -173,7 +173,6 @@ export async function DELETE(request: NextRequest) {
     // Verify token and extract user information
     let userId;
     try {
-      // Using Supabase to verify the token and get user info
       const session = await supabase.auth.getUser(token);
       userId = session?.data?.user?.id;
 
@@ -198,7 +197,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Optional: Check if the note belongs to the authenticated user
+    // Check if the note belongs to the authenticated user
     const { data: noteData, error: fetchError } = await supabase
       .from("notes")
       .select("user_id")
@@ -223,7 +222,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Delete the note
+    // Delete the note from Supabase
     const { error: deleteError } = await supabase
       .from("notes")
       .delete()
@@ -233,6 +232,19 @@ export async function DELETE(request: NextRequest) {
       console.error("Error deleting note:", deleteError);
       return NextResponse.json(
         { error: "Failed to delete note" },
+        { status: 500 }
+      );
+    }
+
+    // Delete the embedding from Pinecone
+    try {
+      // Use the correct namespace if you used one during upsert
+
+      await notesIndex.deleteOne(id);
+    } catch (pineconeError) {
+      console.error("Failed to delete from Pinecone:", pineconeError);
+      return NextResponse.json(
+        { error: "Note deleted from DB but failed in Pinecone" },
         { status: 500 }
       );
     }
