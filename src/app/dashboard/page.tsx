@@ -15,7 +15,7 @@ export default function Dashboard() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (false) {
+      if (!user) {
         router.push("/login");
       }
     };
